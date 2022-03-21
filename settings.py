@@ -9,8 +9,8 @@ BROKERS = [
 
 BROKER = BROKERS[3]
 
-LOGGER_FILE = "mqtt_logger.log"
-LOGGER_FORMAT = '%(asctime)s:%(name)s:%(message)s'
+LOGGER_FILE = "Logs/mqtt_logger.log"
+LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
 LOGGER_LEVEL = 10  # DEBUG
 LOGGER_CONSOLE = False
 

@@ -1,9 +1,10 @@
 import paho.mqtt.client as mqtt
 import time
 import settings
+from logger import get_logger
 
-# topic = "TEMPERATURE_Qu4e"
-print(f"SUBSCRIBED TO TOPIC {settings.TOPIC}")
+log = get_logger(name="SUBSCRIBE")
+log.info(f"SUBSCRIBED TO TOPIC {settings.TOPIC}")
 
 received = 0
 
@@ -11,7 +12,7 @@ received = 0
 def on_message(_client, userdata, message):
     global received
     received += 1
-    print(f"received message: {received}", str(message.payload.decode("utf-8")))
+    log.info(f"RECEIVED MESSAGE NR: {received} {str(message.payload.decode('utf-8'))}")
 
 
 if __name__ == "__main__":
