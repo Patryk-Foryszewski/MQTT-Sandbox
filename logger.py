@@ -2,12 +2,18 @@ import logging
 import settings
 
 
+def get_logger_filename(name):
+    return f"{settings.LOGGER_DIR}/{name}.log"
+
+
 def get_logger(
-        name,
+        name="LOGGING",
+        file=None,
         log_format=settings.LOGGER_FORMAT,
-        file=settings.LOGGER_FILE,
         level=settings.LOGGER_LEVEL,
         ):
+
+    file = get_logger_filename(file) if file else settings.LOGGER_FILE
     logger = logging.getLogger(name)
     logger.setLevel(level)
     formatter = logging.Formatter(log_format)
