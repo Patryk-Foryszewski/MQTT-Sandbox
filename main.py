@@ -7,7 +7,6 @@ from random import uniform
 from loggers import Logger
 from prog import args
 
-print('ARGS', args)
 
 if __name__ == "__main__":
     data = {
