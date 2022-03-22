@@ -5,7 +5,9 @@ import time
 from datetime import datetime
 from random import uniform
 from loggers import Logger
+from prog import args
 
+print('ARGS', args)
 
 if __name__ == "__main__":
     data = {
@@ -30,12 +32,15 @@ if __name__ == "__main__":
     time_start = datetime.now()
     s = sched.scheduler(time.time, time.sleep)
 
+    interval = args.interval or settings.TIME_INTERVAL
+    play_time = args.time or settings.PLAY_TIME
+
     def i_am_publishing(sc):
         value = uniform(20.0, 21.0)
         publisher.publish(value)
         delta = datetime.now() - time_start
-        if delta.total_seconds() < settings.PLAY_TIME:
-            s.enter(settings.TIME_INTERVAL, 0, i_am_publishing, (sc,))
+        if delta.total_seconds() < play_time:
+            s.enter(interval, 0, i_am_publishing, (sc,))
 
     i_am_publishing(s)
     s.run()
