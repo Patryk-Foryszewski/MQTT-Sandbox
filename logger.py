@@ -50,5 +50,3 @@ class Logger(Observer):
 
     def update(self, subject: Subject) -> None:
         self.logger(subject.message)
-        # if subject._state < 3:
-        #     print("ConcreteObserverA: Reacted to the event")

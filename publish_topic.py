@@ -28,10 +28,7 @@ class Publisher(Subject):
     message: str = ""
 
     _observers: List[Observer] = []
-    """
-    List of subscribers. In real life, the list of subscribers can be stored
-    more comprehensively (categorized by event type, etc.).
-    """
+
     def __init__(self, client):
         self.client = client
 
