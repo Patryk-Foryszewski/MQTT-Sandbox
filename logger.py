@@ -2,15 +2,15 @@ import logging
 import settings
 
 
-def get_logger_filename(name):
+def get_logger_filename(name: str) -> str:
     return f"{settings.LOGGER_DIR}/{name}.log"
 
 
 def get_logger(
-        name="LOGGING",
-        file=None,
-        log_format=settings.LOGGER_FORMAT,
-        level=settings.LOGGER_LEVEL,
+        name: str = "LOGGING",
+        file: str = None,
+        log_format: str = settings.LOGGER_FORMAT,
+        level: int = settings.LOGGER_LEVEL,
         ):
 
     file = get_logger_filename(file) if file else settings.LOGGER_FILE
