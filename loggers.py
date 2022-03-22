@@ -49,4 +49,4 @@ class Logger(Observer):
         self.logger.addHandler(file_handler)
 
     def update(self, subject: Subject) -> None:
-        self.logger(subject.message)
+        getattr(self.logger, subject.severity)(subject.message)

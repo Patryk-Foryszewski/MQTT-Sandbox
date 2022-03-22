@@ -1,7 +1,7 @@
 import paho.mqtt.client as mqtt
 import time
 import settings
-from logger import get_logger
+from loggers import get_logger
 
 log = get_logger(name="SUBSCRIBE")
 log.info(f"SUBSCRIBED TO TOPIC {settings.TOPIC}")

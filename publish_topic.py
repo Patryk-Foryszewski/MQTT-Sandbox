@@ -1,4 +1,5 @@
 import paho.mqtt.client as mqtt
+import logging
 from random import uniform
 import time
 
@@ -25,12 +26,27 @@ from typing import List
 
 
 class Publisher(Subject):
-    message: str = ""
+    """
+    Docstring under construction.
+    Thoughts to be organized:
+    1. If you need to log messages with severity different to
+        'INFO' set object severity according to requirements i.e.
+        'warning'
+        'logging'
+        Notice that above are not logging levels like logging.DEBUG
+        but logger methods names.
 
+    """
+    message: str = ""
+    severity = 'info'
     _observers: List[Observer] = []
 
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, client_name, topic, broker):
+        self.client_name = client_name
+        self.topic = topic
+        self.broker = broker
+        self.client = mqtt.Client(self.client_name)
+        self.client.connect(self.broker)
 
     def attach(self, observer: Observer) -> None:
         self._observers.append(observer)
@@ -39,11 +55,10 @@ class Publisher(Subject):
         self._observers.remove(observer)
 
     def notify(self) -> None:
-
         for observer in self._observers:
             observer.update(self)
 
-    def publish_temperature(self, temperature):
-        self.client.publish(settings.TOPIC, temperature)
-        self.message = f"PUBLISHED {temperature} TO TOPIC {settings.TOPIC} ON {settings.BROKER}"
+    def publish(self, value):
+        self.client.publish(self.topic, value)
+        self.message = f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}"
         self.notify()

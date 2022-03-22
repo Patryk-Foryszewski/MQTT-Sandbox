@@ -3,3 +3,6 @@ __pycache__/
 venv
 Logs
 events_playgorund.py
+conf
+data
+log

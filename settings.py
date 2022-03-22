@@ -15,3 +15,6 @@ LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
 LOGGER_LEVEL = 10  # DEBUG
 LOGGER_CONSOLE = False
 
+PLAY_TIME = 10
+
+TIME_INTERVAL = 1
