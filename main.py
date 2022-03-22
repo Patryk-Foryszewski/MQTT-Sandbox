@@ -1,5 +1,4 @@
-from publish_topic import Publisher
-from subscribe_topic import Subscriber
+from clients import Publisher, Subscriber
 import settings
 import sched, time
 from datetime import datetime
