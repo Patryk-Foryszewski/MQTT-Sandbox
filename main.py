@@ -1,6 +1,7 @@
 from clients import Publisher, Subscriber
 import settings
-import sched, time
+import sched
+import time
 from datetime import datetime
 from random import uniform
 from loggers import Logger

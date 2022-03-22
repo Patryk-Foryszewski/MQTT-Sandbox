@@ -13,7 +13,7 @@ class BaseClient(Subject):
         'warning'
         'logging'
         Notice that above are not logging levels like logging.DEBUG
-        but logger methods names.
+        but logger methods names. This idea is to be discussed.
 
     """
     message: str = ""
@@ -74,5 +74,5 @@ class Subscriber(BaseClient):
 
     def stop(self):
         self.client.loop_stop()
-        self.message = f"STARTED SUBSCRIPTION AFTER {self.received} MESSAGES"
+        self.message = f"STARTED SUBSCRIPTION to {self.topic}"
         self.notify()
