@@ -20,7 +20,7 @@ def get_logger(
     file_handler = logging.FileHandler(file)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
-    if True:
+    if True:  # to be sys.args console setting
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
