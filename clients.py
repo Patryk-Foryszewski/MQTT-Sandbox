@@ -69,10 +69,10 @@ class Subscriber(BaseClient):
 
     def start(self):
         self.client.loop_start()
-        self.message = f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES"
+        self.message = f"STARTED SUBSCRIPTION to {self.topic}"
         self.notify()
 
     def stop(self):
         self.client.loop_stop()
-        self.message = f"STARTED SUBSCRIPTION to {self.topic}"
+        self.message = f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES"
         self.notify()
