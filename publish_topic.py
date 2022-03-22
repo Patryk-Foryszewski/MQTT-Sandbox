@@ -1,28 +1,6 @@
 import paho.mqtt.client as mqtt
-import logging
-from random import uniform
-import time
-
-import settings
 from events import Subject, Observer
-from random import randrange
 from typing import List
-# from logger import get_logger
-#
-# log = get_logger(name="PUBLISH")
-#
-# if __name__ == "__main__":
-#     mqtt_broker = settings.BROKER
-#
-#     client = mqtt.Client("Temperature_Inside")
-#     client.connect(mqtt_broker)
-#     log.info(f"START PUBLISHING DATA {settings.TOPIC}")
-#
-#     for _ in range(35):
-#         rand_number = uniform(20.0, 21.0)
-#         client.publish(settings.TOPIC, rand_number)
-#         log.info(f"PUBLISHED {rand_number} TO TOPIC {settings.TOPIC} ON {settings.BROKER}")
-#         time.sleep(1)
 
 
 class Publisher(Subject):
@@ -30,7 +8,7 @@ class Publisher(Subject):
     Docstring under construction.
     Thoughts to be organized:
     1. If you need to log messages with severity different to
-        'INFO' set object severity according to requirements i.e.
+        'INFO' set Publisher instance severity according to requirements i.e.
         'warning'
         'logging'
         Notice that above are not logging levels like logging.DEBUG
@@ -39,7 +17,7 @@ class Publisher(Subject):
     """
     message: str = ""
     severity = 'info'
-    _observers: List[Observer] = []
+    _observers: List[Observer] = None
 
     def __init__(self, client_name, topic, broker):
         self.client_name = client_name
@@ -47,6 +25,7 @@ class Publisher(Subject):
         self.broker = broker
         self.client = mqtt.Client(self.client_name)
         self.client.connect(self.broker)
+        self._observers = []
 
     def attach(self, observer: Observer) -> None:
         self._observers.append(observer)

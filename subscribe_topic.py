@@ -1,30 +1,49 @@
 import paho.mqtt.client as mqtt
-import time
-import settings
-from loggers import get_logger
-
-log = get_logger(name="SUBSCRIBE")
-log.info(f"SUBSCRIBED TO TOPIC {settings.TOPIC}")
-
-received = 0
+from events import Subject, Observer
+from typing import List
 
 
-def on_message(_client, userdata, message):
-    global received
-    received += 1
-    log.info(f"RECEIVED MESSAGE NR: {received} {str(message.payload.decode('utf-8'))}")
+class Subscriber(Subject):
+    message: str = ""
+    severity = 'info'
+    _observers: List[Observer] = None
+    received: int = 0
 
+    def __init__(self, client_name, topic, broker):
+        self.client_name = client_name
+        self.topic = topic
+        self.broker = broker
+        self.client = mqtt.Client(self.client_name)
+        self.client.connect(self.broker)
+        self.set_messanger()
+        self.client.subscribe(topic)
+        self._observers = []
+        self.start()
 
-if __name__ == "__main__":
-    mqttBroker = settings.BROKER
+    def attach(self, observer: Observer) -> None:
+        self._observers.append(observer)
 
-    client = mqtt.Client("Smartphone")
-    client.connect(mqttBroker)
+    def detach(self, observer: Observer) -> None:
+        self._observers.remove(observer)
 
-    client.loop_start()
+    def notify(self) -> None:
+        for observer in self._observers:
+            observer.update(self)
 
-    client.subscribe(settings.TOPIC)
-    client.on_message = on_message
+    def on_message(self, _client, userdata, message):
+        self.received += 1
+        self.message = f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}"
+        self.notify()
 
-    time.sleep(30)
-    client.loop_stop()
+    def set_messanger(self):
+        self.client.on_message = self.on_message
+
+    def start(self):
+        self.client.loop_start()
+        self.message = f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES"
+        self.notify()
+
+    def stop(self):
+        self.client.loop_stop()
+        self.message = f"STARTED SUBSCRIPTION AFTER {self.received} MESSAGES"
+        self.notify()
