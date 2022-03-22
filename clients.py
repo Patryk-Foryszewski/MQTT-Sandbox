@@ -11,7 +11,7 @@ class BaseClient(Subject):
     1. If you need to log messages with severity different to
         'INFO' set Publisher instance severity according to requirements i.e.
         'warning'
-        'logging'
+        'error'
         Notice that above are not logging levels like logging.DEBUG
         but logger methods names. This idea is to be discussed.
 
