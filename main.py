@@ -9,9 +9,14 @@ from prog import args
 
 
 if __name__ == "__main__":
+    # Get input arguments or set defaults
+    interval = args.interval or settings.TIME_INTERVAL
+    play_time = args.time or settings.PLAY_TIME
+    broker = args.broker or settings.BROKER
+
     data = {
         "topic": settings.TOPIC,
-        "broker": settings.BROKER
+        "broker": broker
     }
 
     subscriber = Subscriber(client_name="smartphone", **data)
@@ -20,7 +25,6 @@ if __name__ == "__main__":
         file="subscriber"
     )
     subscriber.attach(subscriber_logger)
-    # subscriber.client.on_message = subscriber.on_message
 
     publisher = Publisher(client_name="temperature_inside", **data)
     publisher_logger = Logger(
@@ -31,8 +35,6 @@ if __name__ == "__main__":
     time_start = datetime.now()
     s = sched.scheduler(time.time, time.sleep)
 
-    interval = args.interval or settings.TIME_INTERVAL
-    play_time = args.time or settings.PLAY_TIME
 
     def i_am_publishing(sc):
         value = uniform(20.0, 21.0)
