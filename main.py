@@ -22,14 +22,14 @@ if __name__ == "__main__":
     subscriber = Subscriber(client_name="smartphone", **data)
     subscriber_logger = Logger(
         name="SUBSCRIBER",
-        file="subscriber"
+        file=f"subscriber_{subscriber.client_name}"
     )
     subscriber.attach(subscriber_logger)
 
     publisher = Publisher(client_name="temperature_inside", **data)
     publisher_logger = Logger(
         name="PUBLISHER",
-        file="publisher"
+        file=f"publisher_{publisher.client_name}"
     )
     publisher.attach(publisher_logger)
     time_start = datetime.now()
