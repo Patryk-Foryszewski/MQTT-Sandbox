@@ -36,6 +36,12 @@ LOGGING_CONFIG = {
             'class': 'logging.StreamHandler',
             'stream': 'ext://sys.stdout',  # Default is stderr
         },
+        'file': {
+            'level': "DEBUG",
+            'formatter': 'standard',
+            'class': 'logging.FileHandler',
+            'filename': 'Logs/log.log'
+        }
     },
     'loggers': {
         '': {  # root logger
@@ -43,9 +49,10 @@ LOGGING_CONFIG = {
             'level': 'WARNING',
             'propagate': False
         },
-        'my.packg': {
-            'handlers': ['default'],
+        'clients': {
+            'handlers': ['default', 'file'],
             'level': 'INFO',
+
             'propagate': False
         },
         '__main__': {  # if __name__ == '__main__'
