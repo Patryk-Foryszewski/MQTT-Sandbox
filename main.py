@@ -19,12 +19,20 @@ if __name__ == "__main__":
         "broker": broker
     }
 
-    subscriber = Subscriber(client_name="smartphone", **data)
+    subscriber = Subscriber(client_name="smartphone_1", **data)
     subscriber_logger = Logger(
         name="SUBSCRIBER",
         file=f"subscriber_{subscriber.client_name}"
     )
     subscriber.attach(subscriber_logger)
+
+    subscriber_2 = Subscriber(client_name="smartphone_2", **data)
+    subscriber_logger_2 = Logger(
+        name="SUBSCRIBER_2",
+        file=f"subscriber_{subscriber_2.client_name}"
+    )
+    subscriber.attach(subscriber_logger_2)
+    subscriber.start()
 
     publisher = Publisher(client_name="temperature_inside", **data)
     publisher_logger = Logger(
@@ -32,6 +40,8 @@ if __name__ == "__main__":
         file=f"publisher_{publisher.client_name}"
     )
     publisher.attach(publisher_logger)
+    publisher.start()
+
     time_start = datetime.now()
     s = sched.scheduler(time.time, time.sleep)
 

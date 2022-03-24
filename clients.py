@@ -4,6 +4,7 @@ from events import Subject, Observer
 from typing import List
 
 
+
 class BaseClient(Subject):
     """
     Docstring under construction.
@@ -25,7 +26,6 @@ class BaseClient(Subject):
         self.topic = topic
         self.broker = broker
         self.client = mqtt.Client(self.client_name)
-        self.client.connect(self.broker)
         self._observers = []
 
     def attach(self, observer: Observer) -> None:
@@ -38,6 +38,32 @@ class BaseClient(Subject):
         for observer in self._observers:
             observer.update(self)
 
+    def connect_fail(self, *args, **kwargs):
+        print('CONNECTION FAILED', args, kwargs)
+        self.severity = 'exception'
+        self.log(f"CONNECTION FAILED  {self.topic}", severity='exception')
+
+    def log(self, message, severity='info'):
+        self.message = message
+        self.severity = severity
+        self.notify()
+
+    def start(self):
+        self.client.on_connect_fail = self.connect_fail
+        self.client.connect(self.broker)
+        self.client.on_connect = self.on_connect
+
+    def on_connect(self, client, userdata, flags, rc):
+        messages = {
+            0: "Connection successful",
+            1: "Connection refused – incorrect protocol version",
+            2: "Connection refused – invalid client identifier",
+            3: "Connection refused – server unavailable",
+            4: "Connection refused – bad username or password",
+            5: "Connection refused – not authorised",
+        }
+        self.log(messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED").upper())
+
 
 class Publisher(BaseClient):
 
@@ -46,8 +72,7 @@ class Publisher(BaseClient):
 
     def publish(self, value):
         self.client.publish(self.topic, value)
-        self.message = f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}"
-        self.notify()
+        self.log(f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}")
 
 
 class Subscriber(BaseClient):
@@ -55,24 +80,20 @@ class Subscriber(BaseClient):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.set_messanger()
         self.client.subscribe(self.topic)
-        self.start()
 
     def on_message(self, _client, userdata, message):
+        # print(f'CLIENT {self.client_name}', type(_client), _client, self.on_message)
+        # print('MORE ABUOT CLIENT', dir(_client))
         self.received += 1
-        self.message = f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}"
-        self.notify()
-
-    def set_messanger(self):
-        self.client.on_message = self.on_message
+        self.log(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
 
     def start(self):
+        super().start()
+        self.client.on_message = self.on_message
         self.client.loop_start()
-        self.message = f"STARTED SUBSCRIPTION to {self.topic}"
-        self.notify()
+        self.log(f"STARTED SUBSCRIPTION to {self.topic}")
 
     def stop(self):
         self.client.loop_stop()
-        self.message = f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES"
-        self.notify()
+        self.log(f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES")
