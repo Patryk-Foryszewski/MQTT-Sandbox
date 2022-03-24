@@ -22,10 +22,10 @@ class Logger(Observer):
         formatter = logging.Formatter(log_format)
         file_handler = logging.FileHandler(file)
         file_handler.setFormatter(formatter)
-        # if args.print_logs:  # to be sys.args console setting
-        #     stream_handler = logging.StreamHandler()
-        #     stream_handler.setFormatter(formatter)
-        #     self.logger.addHandler(stream_handler)
+        if args.print_logs:  # to be sys.args console setting
+            stream_handler = logging.StreamHandler()
+            stream_handler.setFormatter(formatter)
+            self.logger.addHandler(stream_handler)
         self.logger.addHandler(file_handler)
 
     def update(self, subject: Subject) -> None:

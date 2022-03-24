@@ -2,7 +2,9 @@ from events import Subject
 import paho.mqtt.client as mqtt
 from events import Subject, Observer
 from typing import List
+import logging
 
+logger = logging.getLogger(__name__)
 
 
 class BaseClient(Subject):
@@ -41,7 +43,7 @@ class BaseClient(Subject):
     def connect_fail(self, *args, **kwargs):
         print('CONNECTION FAILED', args, kwargs)
         self.severity = 'exception'
-        self.log(f"CONNECTION FAILED  {self.topic}", severity='exception')
+        logger.info(f"CONNECTION FAILED  {self.topic}")
 
     def log(self, message, severity='info'):
         self.message = message
@@ -62,7 +64,7 @@ class BaseClient(Subject):
             4: "Connection refused – bad username or password",
             5: "Connection refused – not authorised",
         }
-        self.log(messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED").upper())
+        logger.info(messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED").upper())
 
 
 class Publisher(BaseClient):
@@ -72,7 +74,7 @@ class Publisher(BaseClient):
 
     def publish(self, value):
         self.client.publish(self.topic, value)
-        self.log(f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}")
+        logger.info(f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}")
 
 
 class Subscriber(BaseClient):
@@ -80,20 +82,20 @@ class Subscriber(BaseClient):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.client.subscribe(self.topic)
 
     def on_message(self, _client, userdata, message):
         # print(f'CLIENT {self.client_name}', type(_client), _client, self.on_message)
         # print('MORE ABUOT CLIENT', dir(_client))
         self.received += 1
-        self.log(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
+        logger.info(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
 
     def start(self):
         super().start()
         self.client.on_message = self.on_message
+        self.client.subscribe(self.topic)
         self.client.loop_start()
-        self.log(f"STARTED SUBSCRIPTION to {self.topic}")
+        logger.info(f"STARTING SUBSCRIPTION to {self.topic}")
 
     def stop(self):
         self.client.loop_stop()
-        self.log(f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES")
+        logger.info(f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES")

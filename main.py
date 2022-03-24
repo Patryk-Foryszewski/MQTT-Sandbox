@@ -7,6 +7,9 @@ from random import uniform
 from loggers import Logger
 from prog import args
 
+from logging.config import dictConfig
+
+dictConfig(settings.LOGGING_CONFIG)
 
 if __name__ == "__main__":
     # Get input arguments or set defaults
@@ -19,20 +22,21 @@ if __name__ == "__main__":
         "broker": broker
     }
 
-    subscriber = Subscriber(client_name="smartphone_1", **data)
-    subscriber_logger = Logger(
-        name="SUBSCRIBER",
-        file=f"subscriber_{subscriber.client_name}"
-    )
-    subscriber.attach(subscriber_logger)
+    subscriber_1 = Subscriber(client_name="smartphone_1", **data)
+    # subscriber_1_logger = Logger(
+    #     name="SUBSCRIBER_1",
+    #     file=f"subscriber_{subscriber_1.client_name}"
+    # )
+    # subscriber_1.attach(subscriber_1_logger)
+    subscriber_1.start()
 
     subscriber_2 = Subscriber(client_name="smartphone_2", **data)
-    subscriber_logger_2 = Logger(
-        name="SUBSCRIBER_2",
-        file=f"subscriber_{subscriber_2.client_name}"
-    )
-    subscriber.attach(subscriber_logger_2)
-    subscriber.start()
+    # subscriber_2_logger = Logger(
+    #     name="SUBSCRIBER_2",
+    #     file=f"subscriber_{subscriber_2.client_name}"
+    # )
+    # subscriber_2.attach(subscriber_2_logger)
+    subscriber_2.start()
 
     publisher = Publisher(client_name="temperature_inside", **data)
     publisher_logger = Logger(
@@ -55,4 +59,5 @@ if __name__ == "__main__":
 
     i_am_publishing(s)
     s.run()
-    subscriber.stop()
+    subscriber_1.stop()
+    subscriber_2.stop()
