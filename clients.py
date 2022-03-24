@@ -82,8 +82,6 @@ class Subscriber(BaseClient):
         super().__init__(*args, **kwargs)
 
     def on_message(self, _client, userdata, message):
-        # print(f'CLIENT {self.client_name}', type(_client), _client, self.on_message)
-        # print('MORE ABUOT CLIENT', dir(_client))
         self.received += 1
         logger.info(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
 
