@@ -51,8 +51,7 @@ LOGGING_CONFIG = {
         },
         'clients': {
             'handlers': ['default', 'file'],
-            'level': 'INFO',
-
+            'level': 'DEBUG',
             'propagate': False
         },
         '__main__': {  # if __name__ == '__main__'

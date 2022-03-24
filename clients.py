@@ -20,8 +20,15 @@ class BaseClient(Subject):
 
     """
     message: str = ""
-    severity = 'info'
     _observers: List[Observer] = None
+    messages = {
+        0: "CONNECTION SUCCESSFUL",
+        1: "CONNECTION REFUSED – incorrect protocol version",
+        2: "CONNECTION REFUSED – invalid client identifier",
+        3: "CONNECTION REFUSED – server unavailable",
+        4: "CONNECTION REFUSED – bad username or password",
+        5: "CONNECTION REFUSED – not authorised",
+    }
 
     def __init__(self, client_name, topic, broker):
         self.client_name = client_name
@@ -41,8 +48,6 @@ class BaseClient(Subject):
             observer.update(self)
 
     def connect_fail(self, *args, **kwargs):
-        print('CONNECTION FAILED', args, kwargs)
-        self.severity = 'exception'
         logger.info(f"CONNECTION FAILED  {self.topic}")
 
     def log(self, message, severity='info'):
@@ -56,15 +61,8 @@ class BaseClient(Subject):
         self.client.on_connect = self.on_connect
 
     def on_connect(self, client, userdata, flags, rc):
-        messages = {
-            0: "Connection successful",
-            1: "Connection refused – incorrect protocol version",
-            2: "Connection refused – invalid client identifier",
-            3: "Connection refused – server unavailable",
-            4: "Connection refused – bad username or password",
-            5: "Connection refused – not authorised",
-        }
-        logger.info(messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED").upper())
+        connack_message = self.messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED")
+        logger.info(f'CLIENT {client.cliend_id} ESTABLISH CONNECTION MESSAGE {connack_message}')
 
 
 class Publisher(BaseClient):
