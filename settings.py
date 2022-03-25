@@ -45,12 +45,12 @@ LOGGING_CONFIG = {
     },
     'loggers': {
         '': {  # root logger
-            'handlers': ['default'],
+            'handlers': ['default'] if args.print_logs else [],
             'level': 'WARNING',
             'propagate': False
         },
         'clients': {
-            'handlers': ['default', 'file'],
+            'handlers': ['default', 'file'] if args.print_logs else ['file'],
             'level': 'DEBUG',
             'propagate': False
         },
