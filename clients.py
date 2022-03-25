@@ -42,7 +42,7 @@ class BaseClient(Subject):
         logger.info(f"CONNECTION FROM {self.client_name} TO {self.topic} FAILED")
 
     def connect(self):
-        logger.info(f"{self.client_name} CONNECTING TO {self.broker} ON {self.broker}")
+        logger.info(f"{self.client_name} CONNECTING TO {self.topic} ON {self.broker}")
         try:
             self.client.connect(self.broker)
         except Exception as ex:
