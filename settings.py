@@ -1,3 +1,4 @@
+from prog import args
 TOPIC = "TEMPERATURE_Qu4e"
 
 BROKERS = [
@@ -7,19 +8,18 @@ BROKERS = [
     "127.0.0.1"
 ]
 
-BROKER = BROKERS[3]
+BROKER = args.broker or BROKERS[3]
 
 LOGGER_DIR = "Logs"
 LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"
 LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
-LOGGER_LEVEL = 10  # DEBUG
 LOGGER_CONSOLE = False
 
 PLAY_TIME = 10
 
-TIME_INTERVAL = 1
+TIME_INTERVAL = args.interval or 1
 
-TRANSPORT = 'tcp'
+TRANSPORT = args.transport or 'tcp'
 
 LOGGING_CONFIG = {
     'version': 1,
@@ -40,7 +40,7 @@ LOGGING_CONFIG = {
             'level': "DEBUG",
             'formatter': 'standard',
             'class': 'logging.FileHandler',
-            'filename': 'Logs/log.log'
+            'filename': f'{LOGGER_DIR}/log.log'
         }
     },
     'loggers': {

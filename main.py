@@ -4,7 +4,6 @@ import sched
 import time
 from datetime import datetime
 from random import uniform
-from loggers import Logger
 from prog import args
 
 from logging.config import dictConfig
@@ -23,18 +22,13 @@ if __name__ == "__main__":
         "broker": broker
     }
 
-    subscriber_1 = Subscriber(client_name="smartphone_1", **data)
-    subscriber_1.start()
-
-    subscriber_2 = Subscriber(client_name="smartphone_2", **data)
-    subscriber_2.start()
+    # subscriber_1 = Subscriber(client_name="smartphone_1", **data)
+    # subscriber_1.start()
+    #
+    # subscriber_2 = Subscriber(client_name="smartphone_2", **data)
+    # subscriber_2.start()
 
     publisher = Publisher(client_name="temperature_inside", **data)
-    publisher_logger = Logger(
-        name="PUBLISHER",
-        file=f"publisher_{publisher.client_name}"
-    )
-    publisher.attach(publisher_logger)
     publisher.start()
 
     time_start = datetime.now()
@@ -50,5 +44,6 @@ if __name__ == "__main__":
 
     i_am_publishing(s)
     s.run()
-    subscriber_1.stop()
-    subscriber_2.stop()
+    publisher.stop()
+    # subscriber_1.stop()
+    # subscriber_2.stop()

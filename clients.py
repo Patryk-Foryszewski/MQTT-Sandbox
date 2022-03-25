@@ -1,27 +1,17 @@
-from events import Subject
 import paho.mqtt.client as mqtt
 from events import Subject, Observer
 from typing import List
+from collections import defaultdict
 import logging
 
 logger = logging.getLogger(__name__)
 
 
 class BaseClient(Subject):
-    """
-    Docstring under construction.
-    Thoughts to be organized:
-    1. If you need to log messages with severity different to
-        'INFO' set Publisher instance severity according to requirements i.e.
-        'warning'
-        'error'
-        Notice that above are not logging levels like logging.DEBUG
-        but logger methods names. This idea is to be discussed.
 
-    """
     message: str = ""
     _observers: List[Observer] = None
-    messages = {
+    messages = {  # return code: log_message
         0: "CONNECTION SUCCESSFUL",
         1: "CONNECTION REFUSED – incorrect protocol version",
         2: "CONNECTION REFUSED – invalid client identifier",
@@ -29,8 +19,9 @@ class BaseClient(Subject):
         4: "CONNECTION REFUSED – bad username or password",
         5: "CONNECTION REFUSED – not authorised",
     }
+    messages = defaultdict(lambda: "RETURN CODE NOT SUPPORTED", messages)
 
-    def __init__(self, client_name, topic, broker):
+    def __init__(self, client_name: str, topic: str, broker: str):
         self.client_name = client_name
         self.topic = topic
         self.broker = broker
@@ -48,21 +39,28 @@ class BaseClient(Subject):
             observer.update(self)
 
     def connect_fail(self, *args, **kwargs):
-        logger.info(f"CONNECTION FAILED  {self.topic}")
+        logger.info(f"CONNECTION FROM {self.client_name} TO {self.topic} FAILED")
 
-    def log(self, message, severity='info'):
-        self.message = message
-        self.severity = severity
-        self.notify()
+    def connect(self):
+        logger.info(f"{self.client_name} CONNECTING TO {self.broker} ON {self.broker}")
+        try:
+            self.client.connect(self.broker)
+        except Exception as ex:
+            logger.exception(f"FAILED TO CONNECT {ex}",)
+            return False
+        else:
+            return True
 
     def start(self):
         self.client.on_connect_fail = self.connect_fail
-        self.client.connect(self.broker)
         self.client.on_connect = self.on_connect
+        self.connect()
+
+    def stop(self):
+        self.client.loop_stop()
 
     def on_connect(self, client, userdata, flags, rc):
-        connack_message = self.messages.get(rc, f"ERROR CODE {rc} NOT SUPPORTED")
-        logger.info(f'CLIENT {client.cliend_id} ESTABLISH CONNECTION MESSAGE {connack_message}')
+        logger.info(f'CLIENT {self.client_name} ESTABLISH CONNECTION MESSAGE {self.messages[rc]}')
 
 
 class Publisher(BaseClient):
@@ -70,9 +68,21 @@ class Publisher(BaseClient):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def publish(self, value):
-        self.client.publish(self.topic, value)
-        logger.info(f"PUBLISHED {value} TO TOPIC {self.topic} ON {self.broker}")
+    def on_publish(self, client, userdata, ):
+        print("ON PUBLISH", args)
+
+    def publish(self, value: str):
+        rc,  = self.client.publish(self.topic, value)
+        print("PUBLISHED", published)
+        logger.info(f"{self.client_name} PUBLISHED {value}")
+
+    def start(self):
+        super(Publisher, self).start()
+        self.client.on_publish = self.on_publish
+
+    def stop(self):
+        super().stop()
+        logger.info(f"PUBLISHER {self.client_name} STOPPED PUBLISHING")
 
 
 class Subscriber(BaseClient):
@@ -93,5 +103,5 @@ class Subscriber(BaseClient):
         logger.info(f"STARTING SUBSCRIPTION to {self.topic}")
 
     def stop(self):
-        self.client.loop_stop()
+        super().stop()
         logger.info(f"STOPPED SUBSCRIPTION AFTER {self.received} MESSAGES")
