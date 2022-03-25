@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseClient(Subject):
-
+    connected: bool = False
     message: str = ""
     _observers: List[Observer] = None
     messages = {  # return code: log_message
@@ -41,15 +41,19 @@ class BaseClient(Subject):
     def connect_fail(self, *args, **kwargs):
         logger.info(f"CONNECTION FROM {self.client_name} TO {self.topic} FAILED")
 
+    def on_connect(self, client, userdata, flags, rc):
+        # logger.info(f"{self.client_name} ON CONNECT FLAGS {flags}")
+        if rc == 0:
+            self.connected = True
+        logger.info(f'{self.client_name} ESTABLISH CONNECTION MESSAGE {self.messages[rc]}')
+
     def connect(self):
         logger.info(f"{self.client_name} CONNECTING TO {self.topic} ON {self.broker}")
         try:
             self.client.connect(self.broker)
         except Exception as ex:
+            self.connected = False
             logger.exception(f"FAILED TO CONNECT {ex}",)
-            return False
-        else:
-            return True
 
     def start(self):
         self.client.on_connect_fail = self.connect_fail
@@ -59,30 +63,32 @@ class BaseClient(Subject):
     def stop(self):
         self.client.loop_stop()
 
-    def on_connect(self, client, userdata, flags, rc):
-        logger.info(f'CLIENT {self.client_name} ESTABLISH CONNECTION MESSAGE {self.messages[rc]}')
-
 
 class Publisher(BaseClient):
+    sent: dict = None
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.sent = {}
 
-    def on_publish(self, client, userdata, ):
-        print("ON PUBLISH", args)
+    def on_publish(self, client, userdata, nr):
+        messages = {0: "SUCCESS"}
+        messages = defaultdict(lambda: "RETURN CODE NOT SUPPORTED", messages)
+        logger.info(f"{self.client_name} PUBLISH VALUE {self.sent[nr][1]} RESULT {messages[self.sent[nr][0]]}")
+        del self.sent[nr]
 
     def publish(self, value: str):
-        rc,  = self.client.publish(self.topic, value)
-        print("PUBLISHED", published)
-        logger.info(f"{self.client_name} PUBLISHED {value}")
+        rc, nr = self.client.publish(self.topic, value)  # return_code, message_number
+        self.sent[nr] = (rc, value)
 
     def start(self):
-        super(Publisher, self).start()
+        super().start()
+        self.client.loop_start()
         self.client.on_publish = self.on_publish
 
     def stop(self):
         super().stop()
-        logger.info(f"PUBLISHER {self.client_name} STOPPED PUBLISHING")
+        logger.info(f"{self.client_name} STOPPED PUBLISHING")
 
 
 class Subscriber(BaseClient):
@@ -100,7 +106,7 @@ class Subscriber(BaseClient):
         self.client.on_message = self.on_message
         self.client.subscribe(self.topic)
         self.client.loop_start()
-        logger.info(f"STARTING SUBSCRIPTION to {self.topic}")
+        logger.info(f"STARTING SUBSCRIPTION TO {self.topic}")
 
     def stop(self):
         super().stop()
