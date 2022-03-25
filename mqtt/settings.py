@@ -49,7 +49,7 @@ LOGGING_CONFIG = {
             'level': 'WARNING',
             'propagate': False
         },
-        'clients': {
+        'mqtt.clients': {
             'handlers': ['default', 'file'] if args.print_logs else ['file'],
             'level': 'DEBUG',
             'propagate': False

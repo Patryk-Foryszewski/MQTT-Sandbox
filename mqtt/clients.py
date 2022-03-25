@@ -1,5 +1,5 @@
 import paho.mqtt.client as mqtt
-from events import Subject, Observer
+from .events import Subject, Observer
 from typing import List
 from collections import defaultdict
 import logging

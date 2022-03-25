@@ -1,5 +1,5 @@
-from clients import Publisher, Subscriber
-import settings
+from mqtt.clients import Publisher, Subscriber
+from mqtt import settings
 import sched
 import time
 from datetime import datetime
@@ -7,7 +7,7 @@ from random import uniform
 from prog import args
 
 from logging.config import dictConfig
-
+print('CNF', settings.LOGGING_CONFIG)
 dictConfig(settings.LOGGING_CONFIG)
 
 
