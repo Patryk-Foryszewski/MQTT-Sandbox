@@ -3,7 +3,7 @@ version: "3.3"
 services:
   broker:
     image: eclipse-mosquitto
-#    network_mode: host
+    network_mode: host
     volumes:
       - ./conf:/mosquitto/conf
       - ./data:/mosquitto/data
@@ -11,9 +11,16 @@ services:
     ports:
       - "1833:1833"
       - "9001:9001"
-    networks:
-      - factory
 
+  ubuntu:
+    image: ubuntu
+    network_mode: host
+    command: tail -F anything
+
+  busybox:
+    image: busybox
+    network_mode: host
+    command: tail -F anything
 
   live-stream:
     build:
@@ -26,8 +33,9 @@ services:
       - live_stream_logs:/app/Logs
       - .:/app
     restart: on-failure
-    networks:
-      - factory
+    network_mode: host
+#    networks:
+#      - factory
     command: ["python3", "live_stream.py"]
 
 volumes:
@@ -37,7 +45,6 @@ volumes:
       type: none
       o: bind
       device: $LIVE_STREAM_LOGS
-
 
 networks:
   factory:

@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 from prog import args
 import random
-
+import socket
 import logging
 from logging.config import dictConfig
 dictConfig(settings.LOGGING_CONFIG)
@@ -17,6 +17,7 @@ if __name__ == "__main__":
     interval = args.interval or settings.TIME_INTERVAL
     play_time = args.time or settings.PLAY_TIME
     broker = args.broker or settings.BROKER
+    # broker = socket.gethostbyname('broker')
 
     data = {
         "topic": "PROD_LINE_1",

@@ -9,7 +9,7 @@ BROKERS = [
     "127.0.0.1"
 ]
 
-BROKER = args.broker or os.environ.get('BROKER_DOMAIN')
+BROKER = args.broker or BROKERS[3]  # os.environ.get('BROKER_DOMAIN')
 
 LOGGER_DIR = "Logs"
 LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"

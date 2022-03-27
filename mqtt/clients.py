@@ -74,7 +74,7 @@ class Publisher(BaseClient):
     def on_publish(self, client, userdata, nr):
         messages = {0: "SUCCESS"}
         messages = defaultdict(lambda: "RETURN CODE NOT SUPPORTED", messages)
-        logger.info(f"{self.client_name} PUBLISH VALUE {self.sent[nr][1]} RESULT {messages[self.sent[nr][0]]}")
+        logger.info(f"{self.client_name} PUBLISH VALUE {self.sent[nr][1]} SEND {messages[self.sent[nr][0]]}")
         del self.sent[nr]
 
     def publish(self, value: str):
