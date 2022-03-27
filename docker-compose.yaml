@@ -1,8 +1,9 @@
-version: "3"
+version: "3.3"
+
 services:
-  mosquitto:
+  broker:
     image: eclipse-mosquitto
-    network_mode: host
+#    network_mode: host
     volumes:
       - ./conf:/mosquitto/conf
       - ./data:/mosquitto/data
@@ -10,4 +11,34 @@ services:
     ports:
       - "1833:1833"
       - "9001:9001"
-      
+    networks:
+      - factory
+
+
+  live-stream:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - broker
+    volumes:
+      - live_stream_logs:/app/Logs
+      - .:/app
+    restart: on-failure
+    networks:
+      - factory
+    command: ["python3", "live_stream.py"]
+
+volumes:
+  live_stream_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $LIVE_STREAM_LOGS
+
+
+networks:
+  factory:
+    driver: bridge

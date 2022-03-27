@@ -1,4 +1,5 @@
 from prog import args
+import os
 TOPIC = "TEMPERATURE_Qu4e"
 
 BROKERS = [
@@ -8,14 +9,14 @@ BROKERS = [
     "127.0.0.1"
 ]
 
-BROKER = args.broker or BROKERS[3]
+BROKER = args.broker or os.environ.get('BROKER_DOMAIN')
 
 LOGGER_DIR = "Logs"
 LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"
 LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
 LOGGER_CONSOLE = False
 
-PLAY_TIME = 10
+PLAY_TIME = 600
 
 TIME_INTERVAL = args.interval or 1
 
@@ -55,7 +56,7 @@ LOGGING_CONFIG = {
             'propagate': False
         },
         '__main__': {  # if __name__ == '__main__'
-            'handlers': ['default'],
+            'handlers': ['default', 'file'] if args.print_logs else ['file'],
             'level': 'DEBUG',
             'propagate': False
         },
