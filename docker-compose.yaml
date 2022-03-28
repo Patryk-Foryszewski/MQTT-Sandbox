@@ -12,15 +12,15 @@ services:
       - "1833:1833"
       - "9001:9001"
 
-  ubuntu:
-    image: ubuntu
-    network_mode: host
-    command: tail -F anything
-
-  busybox:
-    image: busybox
-    network_mode: host
-    command: tail -F anything
+#  ubuntu:
+#    image: ubuntu
+#    network_mode: host
+#    command: tail -F anything
+#
+#  busybox:
+#    image: busybox
+#    network_mode: host
+#    command: tail -F anything
 
   live-stream:
     build:
