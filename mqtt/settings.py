@@ -9,14 +9,14 @@ BROKERS = [
     "127.0.0.1"
 ]
 
-BROKER = args.broker or BROKERS[3]  # os.environ.get('BROKER_DOMAIN')
+BROKER = args.broker or os.environ.get('BROKER_DOMAIN')
 
 LOGGER_DIR = "Logs"
 LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"
 LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
 LOGGER_CONSOLE = False
 
-PLAY_TIME = 600
+PLAY_TIME = int(os.environ.get('PLAY_TIME')) or 20
 
 TIME_INTERVAL = args.interval or 1
 
@@ -50,7 +50,7 @@ LOGGING_CONFIG = {
             'level': 'WARNING',
             'propagate': False
         },
-        'mqtt.clients': {
+        'mqtt': {
             'handlers': ['default', 'file'] if args.print_logs else ['file'],
             'level': 'DEBUG',
             'propagate': False

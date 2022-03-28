@@ -1,0 +1,2 @@
+from eclipse-mosquitto
+copy mosquitto.conf /mosquitto/config/mosquitto.conf

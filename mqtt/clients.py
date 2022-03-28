@@ -101,6 +101,7 @@ class Subscriber(BaseClient):
         self.received += 1
         self.message = message
         logger.info(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
+        self.notify()
 
     def start(self):
         super().start()

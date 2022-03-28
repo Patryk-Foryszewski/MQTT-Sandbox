@@ -1,9 +1,10 @@
-version: "3.3"
+version: "3.4"
 
 services:
   broker:
-    image: eclipse-mosquitto
-    network_mode: host
+    build:
+      context: .
+      dockerfile: Dockerfile-broker
     volumes:
       - ./conf:/mosquitto/conf
       - ./data:/mosquitto/data
@@ -11,16 +12,6 @@ services:
     ports:
       - "1833:1833"
       - "9001:9001"
-
-#  ubuntu:
-#    image: ubuntu
-#    network_mode: host
-#    command: tail -F anything
-#
-#  busybox:
-#    image: busybox
-#    network_mode: host
-#    command: tail -F anything
 
   live-stream:
     build:
@@ -33,11 +24,7 @@ services:
       - live_stream_logs:/app/Logs
       - .:/app
     restart: on-failure
-    network_mode: host
-#    networks:
-#      - factory
-    command: ["python3", "live_stream.py"]
-
+    command: ["python3", "live_stream.py", "-pl", "t"]
 
   light-tower:
     build:
@@ -50,10 +37,7 @@ services:
       - light_tower_logs:/app/Logs
       - .:/app
     restart: on-failure
-    network_mode: host
-#    networks:
-#      - factory
-    command: ["python3", "light_tower.py"]
+    command: ["python3", "light_tower.py", "-pl", "t"]
 
 volumes:
   live_stream_logs:
@@ -69,7 +53,3 @@ volumes:
       type: none
       o: bind
       device: $LIGHT_TOWER_LOGS
-
-#networks:
-#  factory:
-#    driver: bridge

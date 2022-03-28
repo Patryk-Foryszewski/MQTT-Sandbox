@@ -1,4 +1,4 @@
-from events import Subject, Observer
+from .events import Subject, Observer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 class StickerStatusObserver(Observer):
 
-    def update(self, subject: Subject) -> None:
+    def update(self, subject: Subject):
         text = str(subject.message.payload.decode('utf-8'))
         if 'DAMAGED' in text:
-            logger.exception("ENCOUNTERED DAMAGED STICKER")
+            logger.info("ENCOUNTERED DAMAGED STICKER")
