@@ -99,6 +99,7 @@ class Subscriber(BaseClient):
 
     def on_message(self, _client, userdata, message):
         self.received += 1
+        self.message = message
         logger.info(f"RECEIVED MESSAGE NR: {self.received} {str(message.payload.decode('utf-8'))}")
 
     def start(self):

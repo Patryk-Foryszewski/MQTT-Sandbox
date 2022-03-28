@@ -38,6 +38,23 @@ services:
 #      - factory
     command: ["python3", "live_stream.py"]
 
+
+  light-tower:
+    build:
+      context: .
+    env_file:
+      - .env
+    depends_on:
+      - live-stream
+    volumes:
+      - light_tower_logs:/app/Logs
+      - .:/app
+    restart: on-failure
+    network_mode: host
+#    networks:
+#      - factory
+    command: ["python3", "light_tower.py"]
+
 volumes:
   live_stream_logs:
     driver: local
@@ -46,6 +63,13 @@ volumes:
       o: bind
       device: $LIVE_STREAM_LOGS
 
-networks:
-  factory:
-    driver: bridge
+  light_tower_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: $LIGHT_TOWER_LOGS
+
+#networks:
+#  factory:
+#    driver: bridge
