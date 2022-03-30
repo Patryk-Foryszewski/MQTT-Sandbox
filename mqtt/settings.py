@@ -16,7 +16,7 @@ LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"
 LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'
 LOGGER_CONSOLE = False
 
-PLAY_TIME = int(os.environ.get('PLAY_TIME')) or 20
+PLAY_TIME = int(os.environ.get('PLAY_TIME')) if os.environ.get('PLAY_TIME') else 20
 
 TIME_INTERVAL = args.interval or 1
 

@@ -24,7 +24,7 @@ services:
       - live_stream_logs:/app/Logs
       - .:/app
     restart: on-failure
-    command: ["python3", "live_stream.py", "-pl", "t"]
+    command: ["poetry", "run", "python3", "live_stream.py", "-pl", "t"]
 
   light-tower:
     build:
@@ -37,7 +37,7 @@ services:
       - light_tower_logs:/app/Logs
       - .:/app
     restart: on-failure
-    command: ["python3", "light_tower.py", "-pl", "t"]
+    command: ["poetry", "run", "python3", "light_tower.py", "-pl", "t"]
 
 volumes:
   live_stream_logs:
