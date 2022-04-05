@@ -18,7 +18,8 @@ if __name__ == "__main__":
 
     data = {
         "topic": settings.TOPIC,
-        "broker": broker
+        "broker": broker,
+        "port": args.port if args.port else settings.PORT
     }
 
     # subscriber_1 = Subscriber(client_name="smartphone_1", **data)

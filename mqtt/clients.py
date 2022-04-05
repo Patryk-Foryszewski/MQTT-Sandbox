@@ -21,10 +21,16 @@ class BaseClient(Subject):
     }
     messages = defaultdict(lambda: "RETURN CODE NOT SUPPORTED", messages)
 
-    def __init__(self, client_name: str, topic: str, broker: str):
+    def __init__(self, client_name: str, topic: str, broker: str, port: int = 1833):
         self.client_name = client_name
         self.topic = topic
         self.broker = broker
+        try:
+            self.port = int(port)
+        except Exception as ex:
+            self.port = 1833
+            logger.exception(str(ex))
+
         self.client = mqtt.Client(self.client_name)
         self._observers = []
 
@@ -48,9 +54,9 @@ class BaseClient(Subject):
         logger.info(f'{self.client_name} ESTABLISH CONNECTION MESSAGE {self.messages[rc]}')
 
     def connect(self):
-        logger.info(f"{self.client_name} CONNECTING TO {self.topic} ON {self.broker}")
+        logger.info(f"{self.client_name} CONNECTING TO {self.topic} ON {self.broker}:{self.port}")
         try:
-            self.client.connect(self.broker)
+            self.client.connect(self.broker, self.port)
         except Exception as ex:
             self.connected = False
             logger.exception(f"FAILED TO CONNECT {ex}",)

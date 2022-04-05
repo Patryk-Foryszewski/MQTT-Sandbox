@@ -9,8 +9,8 @@ BROKERS = [
     "127.0.0.1"
 ]
 
-BROKER = args.broker or os.environ.get('BROKER_DOMAIN')
-
+BROKER = os.environ.get('BROKER_DOMAIN')
+PORT = os.environ.get('BROKER_PORT')
 LOGGER_DIR = "Logs"
 LOGGER_FILE = f"{LOGGER_DIR}/mqtt_logger.log"
 LOGGER_FORMAT = '%(asctime)s | %(name)s | %(message)s'

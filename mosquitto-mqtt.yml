@@ -1,0 +1,14 @@
+version: "3.4"
+
+services:
+  broker:
+    build:
+      context: .
+      dockerfile: Dockerfile-broker
+    volumes:
+      - ./conf:/mosquitto/conf
+      - ./data:/mosquitto/data
+      - ./log:/mosquitto/log
+    ports:
+      - "1883:1883"
+      - "9001:9001"
